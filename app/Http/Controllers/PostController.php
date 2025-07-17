@@ -12,7 +12,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $query = Post::with('user');
+        return response()->json($query->get());
+
     }
 
     /**
@@ -20,7 +22,18 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $post = Post::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'user_id' => $request->user()->id, // Assuming user is authenticated
+        ]);
+
+        return response()->json($post, 201);
     }
 
     /**

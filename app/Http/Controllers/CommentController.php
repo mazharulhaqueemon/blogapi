@@ -12,7 +12,8 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        $comments = Comment::with(['user', 'post'])->get();
+        return response()->json($comments);
     }
 
     /**
@@ -20,7 +21,18 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'content' => 'required|string',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $comment = Comment::create([
+            'content' => $request->content,
+            'post_id' => $request->post_id,
+            'user_id' => $request->user()->id, // Assuming user is authenticated
+        ]);
+
+        return response()->json($comment, 201);
     }
 
     /**
@@ -28,7 +40,7 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        //
+
     }
 
     /**
